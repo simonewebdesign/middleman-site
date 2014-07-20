@@ -47,15 +47,28 @@
 #   end
 # end
 
-set :css_dir, 'stylesheets'
+set :css_dir, 'css'
 
-set :js_dir, 'javascripts'
+set :js_dir, 'js'
 
-set :images_dir, 'images'
+set :images_dir, 'img'
+
+# development configuration
+configure :development do
+  activate :livereload
+
+  # Configure Slim
+  Slim::Engine.set_default_options pretty: true, sort_attrs: false
+end
 
 # Build-specific configuration
 configure :build do
   # For example, change the Compass output style for deployment
+  compass_config do |config|
+    config.output_style = :expanded
+    config.line_comments = false
+  end
+
   # activate :minify_css
 
   # Minify Javascript on build
@@ -65,8 +78,27 @@ configure :build do
   # activate :asset_hash
 
   # Use relative URLs
-  # activate :relative_assets
+  activate :relative_assets
+  set :relative_links, true
 
   # Or use a different image path
   # set :http_prefix, "/Content/images/"
+end
+
+# middleman-deploy configuration
+activate :deploy do |deploy|
+  # Automatically run `middleman build` during `middleman deploy`
+  # deploy.build_before = true
+
+  # rsync, ftp, sftp, or git
+  deploy.method = :git
+
+  # remote name or git url, default: origin
+  # deploy.remote   = 'custom-remote'
+
+  # default: gh-pages
+  # deploy.branch   = 'master'
+
+  # commit strategy: can be :force_push or :submodule, default: :force_push
+  # deploy.strategy = :submodule
 end
